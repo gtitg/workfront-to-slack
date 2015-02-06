@@ -33,6 +33,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="RestSharp">
+      <HintPath>..\packages\RestSharp.105.0.1\lib\net4\RestSharp.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
@@ -45,6 +48,10 @@
   <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Workfront\WorkFrontClient.cs" />
+    <Compile Include="Workfront\WorkfrontDeserializer.cs" />
+    <Compile Include="Workfront\WorkfrontModels.cs" />
+    <Compile Include="Workfront\WorkfrontSessionAuthenticator.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="APISettings.config.example">
@@ -54,6 +61,7 @@
     <Content Include="APISettings.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

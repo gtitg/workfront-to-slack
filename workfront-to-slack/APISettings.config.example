@@ -3,6 +3,7 @@ You will need to rename this example file to the filename referenced in the 'fil
   of the appSettings section in the App.config file.
 -->
 <appSettings>
+  <add key="WorkFront_URL" value="URL_HERE"/>
   <add key="WorkFront_Username" value="USERNAME_HERE"/>
   <add key="WorkFront_Password" value="PASSWORD_HERE"/>
   <add key="WorkFront_Team_ID" value="TEAM_ID_HERE"/>
