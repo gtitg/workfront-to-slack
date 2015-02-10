@@ -105,19 +105,19 @@ namespace workfront_to_slack.Workfront
             var updateResponse = client.Execute<UpdateResponse>(updateRequest);
             Console.WriteLine("response status: " + updateResponse.ResponseStatus + " http status code: " + updateResponse.StatusCode + ", " + updateResponse.StatusDescription);
 
-            if(updateResponse.Data != null 
+            if (updateResponse.Data != null
                 && updateResponse.Data.data != null)
             {
                 var updateCount = updateResponse.Data.data.Count();
-                if(updateCount == 1)
+                if (updateCount == 1)
                 {
                     return updateResponse.Data.data.First().updates;
                 }
-                else if(updateCount == 0)
+                else if (updateCount == 0)
                 {
                     Console.WriteLine("Team not found in workfront. Check to make sure your Team ID setting is correct.");
                 }
-                else if(updateCount > 1)
+                else if (updateCount > 1)
                 {
                     // this should never happen
                     Console.WriteLine("More than one team result from workfront with the same id.  Stopping here.  Unknown behvior lies ahead.");

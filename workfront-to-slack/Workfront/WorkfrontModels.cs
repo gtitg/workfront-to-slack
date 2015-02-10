@@ -42,6 +42,6 @@ namespace workfront_to_slack.Workfront
         public string iconName { get; set; }
         public string iconPath { get; set; }
 
-        public DateTime entryDate { get; set; }
+        public string entryDate { get; set; }
     }
 }

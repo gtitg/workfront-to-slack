@@ -48,6 +48,8 @@
   <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Slack\SlackClient.cs" />
+    <Compile Include="Slack\SlackModels.cs" />
     <Compile Include="Workfront\WorkFrontClient.cs" />
     <Compile Include="Workfront\WorkfrontDeserializer.cs" />
     <Compile Include="Workfront\WorkfrontModels.cs" />
