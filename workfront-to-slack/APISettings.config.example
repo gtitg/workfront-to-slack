@@ -8,6 +8,8 @@ You will need to rename this example file to the filename referenced in the 'fil
   <add key="WorkFront_Password" value="PASSWORD_HERE"/>
   <add key="WorkFront_Team_ID" value="TEAM_ID_HERE"/>
 
+  <add key="WorkFront_Update_File" value="updates.txt"/>
+
   <add key="Slack_Webhook_URL" value="URL_HERE"/>
   <add key="Slack_Channel" value="#CHANNEL_HERE"/>
   <add key="Slack_Username" value="USERNAME_HERE"/>

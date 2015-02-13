@@ -40,7 +40,7 @@ namespace workfront_to_slack.Workfront
         {
             try
             {
-                var request = new RestRequest("login", Method.GET);
+                var request = new RestRequest("login", Method.POST);
                 request.AddParameter("username", this.username);
                 request.AddParameter("password", this.password);
 
@@ -87,22 +87,40 @@ namespace workfront_to_slack.Workfront
             }
         }
 
-        public List<Update> getTeamUpdates()
+        private bool connectionConfirmed()
         {
-            if(!hasActiveSession)
+            if (!hasActiveSession)
             {
                 Console.WriteLine("Client not authenticated.  Logging in now.");
-                if(!connect())
+                if (!connect())
                 {
-                    return null;
+                    return false;
                 }
             }
 
-            var updateRequest = new RestRequest("team/search", Method.GET);
-            updateRequest.AddParameter("id", this.teamID);
-            updateRequest.AddParameter("fields", "updates, updates:enteredByName, updates:iconName, updates:iconPath, updates:entryDate");
+            return true;
+        }
 
-            var updateResponse = client.Execute<UpdateResponse>(updateRequest);
+        public List<User> getTeam()
+        {
+            if (!connectionConfirmed())
+            {
+                return null;
+            }
+
+            var updateRequest = new RestRequest("team/search", Method.GET);
+            updateRequest.RequestFormat = DataFormat.Json;
+            updateRequest.AddParameter("id", this.teamID);
+            updateRequest.AddParameter("fields", "users");
+            //updateRequest.AddParameter("updates:entryDate", "$$TODAY-1d");
+            //updateRequest.AddParameter("updates:entryDate_Range", "$$TODAY");
+            //updateRequest.AddParameter("updates:entryDate_Mod", "between");
+
+            //var rawRequest = client.BuildUri(updateRequest);
+            //Console.WriteLine(client.BuildUri(updateRequest));
+
+
+            var updateResponse = client.Execute<TeamResponse>(updateRequest);
             Console.WriteLine("response status: " + updateResponse.ResponseStatus + " http status code: " + updateResponse.StatusCode + ", " + updateResponse.StatusDescription);
 
             if (updateResponse.Data != null
@@ -111,7 +129,7 @@ namespace workfront_to_slack.Workfront
                 var updateCount = updateResponse.Data.data.Count();
                 if (updateCount == 1)
                 {
-                    return updateResponse.Data.data.First().updates;
+                    return updateResponse.Data.data.First().users;
                 }
                 else if (updateCount == 0)
                 {
@@ -125,6 +143,34 @@ namespace workfront_to_slack.Workfront
             }
 
             return null;
+        }
+
+        public List<Update> getUserUpdates(string id)
+        {
+            //51e574dd002eefed533f6427f57c32dc
+            if (!connectionConfirmed())
+            {
+                return null;
+            }
+
+            var updateRequest = new RestRequest("user/{id}", Method.GET);
+            updateRequest.RequestFormat = DataFormat.Json;
+            updateRequest.AddUrlSegment("id", id);
+            //updateRequest.AddParameter("enteredByID", id);
+            updateRequest.AddParameter("fields", "updates, updates:replies, updates:updateJournalEntry, updates:updateNote, updates:updateNote:project, updates:updateNote:task, updates:updateJournalEntry:project, updates:updateJournalEntry:task, updates:enteredByName, updates:updateJournalEntry:entryDate, updates:updateNote:entryDate");
+            //updateRequest.AddParameter("fields", "updates, users, updates:enteredByName, updates:iconName, updates:iconPath, updates:entryDate");
+            //updateRequest.AddParameter("updates:entryDate", "$$TODAY-1d");
+            //updateRequest.AddParameter("updates:entryDate_Range", "$$TODAY");
+            //updateRequest.AddParameter("updates:entryDate_Mod", "between");
+
+            var rawRequest = client.BuildUri(updateRequest);
+            Console.WriteLine(client.BuildUri(updateRequest));
+
+            
+            var updateResponse = client.Execute<UserResponse>(updateRequest);
+            Console.WriteLine("response status: " + updateResponse.ResponseStatus + " http status code: " + updateResponse.StatusCode + ", " + updateResponse.StatusDescription);
+            return updateResponse.Data.data.updates;
+
         }
     }
 }
