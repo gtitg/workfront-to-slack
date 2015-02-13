@@ -55,7 +55,7 @@ namespace workfront_to_slack
                     if(alreadySentSearch == null)
                     {
                         // this update hasn't been sent yet, so we can send it and then add it to the csv list
-                        //slackClient.sendMessage(update.enteredByName, update.ToString(), update.taskName(), update.projectName(), "");
+                        slackClient.sendMessage(update.enteredByName, update.ToString(), update.taskName(), update.projectName(), "");
                         csvUpdateList.Add(update.getCSVVersion());
                     }
                     else
