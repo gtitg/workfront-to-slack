@@ -4,7 +4,7 @@ You will need to rename this example file to the filename referenced in the 'fil
 -->
 <appSettings>
   <add key="WorkFront_BASE_URL" value="https://xxxx.attask-ondemand.com"/>
-  <add key="WorkFront_URL" value="URL_HERE"/>
+  <add key="WorkFront_URL" value="https://xxxx.attask-ondemand.com/attask/api/v4.0"/>
   <add key="WorkFront_Username" value="USERNAME_HERE"/>
   <add key="WorkFront_Password" value="PASSWORD_HERE"/>
   <add key="WorkFront_Team_ID" value="TEAM_ID_HERE"/>
