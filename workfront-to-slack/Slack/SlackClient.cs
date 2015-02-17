@@ -61,6 +61,7 @@ namespace workfront_to_slack.Slack
             
             slackPayload.username = this.username;
             slackPayload.icon_url = this.iconURL;
+            slackPayload.channel = this.channel;
             //slackPayload.mrkdwn = false;
             request.AddBody(slackPayload);
 

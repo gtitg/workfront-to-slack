@@ -77,6 +77,7 @@ namespace workfront_to_slack.Workfront
 
         public Note updateNote { get; set; }
         public JournalEntry updateJournalEntry { get; set; }
+        public List<Update> nestedUpdates { get; set; }
 
         public UpdateForCSV getCSVVersion()
         {

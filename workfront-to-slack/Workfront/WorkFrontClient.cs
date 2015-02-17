@@ -157,7 +157,7 @@ namespace workfront_to_slack.Workfront
             updateRequest.RequestFormat = DataFormat.Json;
             updateRequest.AddUrlSegment("id", id);
             //updateRequest.AddParameter("enteredByID", id);
-            updateRequest.AddParameter("fields", "updates, updates:replies, updates:updateJournalEntry, updates:updateNote, updates:updateNote:project, updates:updateNote:task, updates:updateJournalEntry:project, updates:updateJournalEntry:task, updates:enteredByName, updates:updateJournalEntry:entryDate, updates:updateNote:entryDate");
+            updateRequest.AddParameter("fields", "updates, updates:replies, updates:updateJournalEntry, updates:updateNote, updates:updateNote:project, updates:updateNote:task, updates:updateJournalEntry:project, updates:updateJournalEntry:task, updates:enteredByName, updates:updateJournalEntry:entryDate, updates:updateNote:entryDate, updates:combinedUpdates, updates:nestedUpdates, updates:nestedUpdates:updateJournalEntry, updates:nestedUpdates:updateNote, updates:nestedUpdates:updateNote:project, updates:nestedUpdates:updateNote:task, updates:nestedUpdates:updateJournalEntry:project, updates:nestedUpdates:updateJournalEntry:task, updates:nestedUpdates:enteredByName, updates:nestedUpdates:updateJournalEntry:entryDate, updates:nestedUpdates:updateNote:entryDate");
             //updateRequest.AddParameter("fields", "updates, users, updates:enteredByName, updates:iconName, updates:iconPath, updates:entryDate");
             //updateRequest.AddParameter("updates:entryDate", "$$TODAY-1d");
             //updateRequest.AddParameter("updates:entryDate_Range", "$$TODAY");
@@ -169,6 +169,21 @@ namespace workfront_to_slack.Workfront
             
             var updateResponse = client.Execute<UserResponse>(updateRequest);
             Console.WriteLine("response status: " + updateResponse.ResponseStatus + " http status code: " + updateResponse.StatusCode + ", " + updateResponse.StatusDescription);
+            if(updateResponse.Data.data.updates != null)
+            {
+                var nestedUpdatesToAdd = new List<Update>();
+                foreach(var update in updateResponse.Data.data.updates)
+                {
+                    if(update.nestedUpdates != null && update.nestedUpdates.Count() > 0)
+                    {
+                        foreach(var nestedUpdate in update.nestedUpdates)
+                        {
+                            nestedUpdatesToAdd.Add(nestedUpdate);
+                        }
+                    }
+                }
+                updateResponse.Data.data.updates.AddRange(nestedUpdatesToAdd);
+            }
             return updateResponse.Data.data.updates;
 
         }

@@ -38,7 +38,7 @@ namespace workfront_to_slack.Slack
         public string icon_url { get; set; }
         public string username { get; set; }
         //public bool mrkdwn { get; set; }
-
+        public string channel { get; set; }
         
 
         public List<SlackAttachment> attachments { get; set; }
