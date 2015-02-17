@@ -15,6 +15,7 @@ namespace workfront_to_slack
     {
         static void Main(string[] args)
         {
+            var workFront_BASE_URL = ConfigurationManager.AppSettings["WorkFront_BASE_URL"];
             var workFront_URL = ConfigurationManager.AppSettings["WorkFront_URL"];
             var workFront_Username = ConfigurationManager.AppSettings["WorkFront_Username"];
             var workFront_Password = ConfigurationManager.AppSettings["WorkFront_Password"];
@@ -28,6 +29,7 @@ namespace workfront_to_slack
             var slack_user_icon_URL = ConfigurationManager.AppSettings["Slack_User_Icon_URL"];
 
             var csvUpdateList = new List<UpdateForCSV>();
+            var updatesEncounteredInThisSession = new List<UpdateForCSV>();
 
             if (File.Exists(workFrontUpdatesFile))
             {
@@ -48,14 +50,17 @@ namespace workfront_to_slack
             foreach(var user in teamUsers)
             {
                 var userUpdates = workFrontClient.getUserUpdates(user.ID);
+                var userLink = WorkfrontUtils.getUserLink(workFront_BASE_URL, user.ID);
                 foreach(var update in userUpdates)
                 {
                     //Console.WriteLine(update.ToString());
+                    updatesEncounteredInThisSession.Add(update.getCSVVersion());
                     var alreadySentSearch = csvUpdateList.Where(u => u.updateObjCode.Equals(update.updateObjCode) && u.updateObjID.Equals(update.updateObjID)).FirstOrDefault();
                     if(alreadySentSearch == null)
                     {
                         // this update hasn't been sent yet, so we can send it and then add it to the csv list
-                        slackClient.sendMessage(update.enteredByName, update.ToString(), update.taskName(), update.projectName(), "");
+                        var taskLink = WorkfrontUtils.getTaskLink(workFront_BASE_URL, update.taskID());
+                        slackClient.sendMessage(update.enteredByName, update.ToString(), update.taskName(), update.projectName(), userLink, taskLink);
                         csvUpdateList.Add(update.getCSVVersion());
                     }
                     else
@@ -66,21 +71,32 @@ namespace workfront_to_slack
                 }
             }
 
-            using (TextWriter writer = File.CreateText(workFrontUpdatesFile))
+            var updatesToRemoveFromFile = new List<UpdateForCSV>();
+            for (int i = 0; i < csvUpdateList.Count(); i++ )
             {
-                var csv = new CsvWriter(writer);
-                csv.WriteRecords(csvUpdateList);
+                // loop through the csv file updates, and see if there are records in the file which we did not
+                // encounter in this run of the program.  If that is the case, we can prune them from the file
+                // to prevent the file from getting too large.
+
+                var fileUpdate = csvUpdateList[i];
+                var searchResult = updatesEncounteredInThisSession.Where(u => u.updateObjCode.Equals(fileUpdate.updateObjCode) && u.updateObjID.Equals(fileUpdate.updateObjID)).FirstOrDefault();
+                if(searchResult == null)
+                {
+                    // we didn't see this update in this run, so we should prune it from the file
+                    updatesToRemoveFromFile.Add(fileUpdate);
+                }
             }
-            //foreach(var u in updates)
-            //{
-            //    Console.WriteLine(u.message);
-            //    Console.WriteLine();
 
-            //    slackClient.sendMessage(u.enteredByName, u.message, "");
-            //    break;
-            //}
+            foreach(var fileUpdate in updatesToRemoveFromFile)
+            {
+                csvUpdateList.Remove(fileUpdate);
+            }
 
-            
+                using (TextWriter writer = File.CreateText(workFrontUpdatesFile))
+                {
+                    var csv = new CsvWriter(writer);
+                    csv.WriteRecords(csvUpdateList);
+                }
 
             workFrontClient.logout();
         }

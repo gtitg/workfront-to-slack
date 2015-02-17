@@ -134,6 +134,22 @@ namespace workfront_to_slack.Workfront
                 return "None";
             }
         }
+
+        public string taskID()
+        {
+            if (updateNote != null && updateNote.task != null)
+            {
+                return updateNote.task.ID;
+            }
+            else if (updateJournalEntry != null && updateJournalEntry.task != null)
+            {
+                return updateJournalEntry.task.ID;
+            }
+            else
+            {
+                return null;
+            }
+        }
     }
 
     public class Project
