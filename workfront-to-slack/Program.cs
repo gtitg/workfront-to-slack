@@ -63,7 +63,7 @@ namespace workfront_to_slack
                         {
                             // this update hasn't been sent yet, so we can send it and then add it to the csv list
                             var taskLink = WorkfrontUtils.getTaskLink(workFront_BASE_URL, update.taskID());
-                            //slackClient.sendMessage(update.enteredByName, update.ToString(), update.taskName(), update.projectName(), userLink, taskLink);
+                            slackClient.sendMessage(update.enteredByName, update.ToString(), update.taskName(), update.projectName(), userLink, taskLink);
                             csvUpdateList.Add(update.getCSVVersion());
                         }
                         else
