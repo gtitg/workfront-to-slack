@@ -7,8 +7,10 @@ The app currently gets all of the users in your specified team, and gets the mos
 
 It currenty keeps track of which updates it has already sent to slack in a local text file.  
 
-The idea is that eventually we will query workfront only for updates that have happened in the past day, and then we will clear the text file of any updates older than 1 day.  This removes the need for any complex database storage which seems like overkill.
+We also make sure that an update occurred today before sending it to slack.
 
-Next step is to format the messages as Slack attachements, so that the task name and project name for each user's update can also be listed in a readable way.
+We format the updates as slack attachments so that the project name, task name, and updater name are displayed nicely:
+
+![Screenshot of workfront update appearing as a formatted slack attachment](/screenshots/workfront_slack_attachment.png?raw=true)
 
 -- Stephen
