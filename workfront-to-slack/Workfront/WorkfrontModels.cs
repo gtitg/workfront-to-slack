@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -74,6 +75,20 @@ namespace workfront_to_slack.Workfront
         public string iconPath { get; set; }
 
         public string entryDate { get; set; }
+
+        public DateTime EntryDate
+        {
+            get
+            {
+                DateTime d;
+                if (DateTime.TryParseExact(entryDate, "yyyy-MM-ddTHH:mm:ss:fffzzz", CultureInfo.InvariantCulture, DateTimeStyles.None, out d))
+                {
+                    return d;
+                }
+
+                return default(DateTime);
+            }
+        }
 
         public Note updateNote { get; set; }
         public JournalEntry updateJournalEntry { get; set; }

@@ -55,19 +55,22 @@ namespace workfront_to_slack
                 {
                     //Console.WriteLine(update.ToString());
                     updatesEncounteredInThisSession.Add(update.getCSVVersion());
-                    var alreadySentSearch = csvUpdateList.Where(u => u.updateObjCode.Equals(update.updateObjCode) && u.updateObjID.Equals(update.updateObjID)).FirstOrDefault();
-                    if(alreadySentSearch == null)
+                    if (update.EntryDate.Date == DateTime.Now.Date)
                     {
-                        // this update hasn't been sent yet, so we can send it and then add it to the csv list
-                        var taskLink = WorkfrontUtils.getTaskLink(workFront_BASE_URL, update.taskID());
-                        slackClient.sendMessage(update.enteredByName, update.ToString(), update.taskName(), update.projectName(), userLink, taskLink);
-                        csvUpdateList.Add(update.getCSVVersion());
+                        // only attempt the check and send the update if it is from today
+                        var alreadySentSearch = csvUpdateList.Where(u => u.updateObjCode.Equals(update.updateObjCode) && u.updateObjID.Equals(update.updateObjID)).FirstOrDefault();
+                        if (alreadySentSearch == null)
+                        {
+                            // this update hasn't been sent yet, so we can send it and then add it to the csv list
+                            var taskLink = WorkfrontUtils.getTaskLink(workFront_BASE_URL, update.taskID());
+                            //slackClient.sendMessage(update.enteredByName, update.ToString(), update.taskName(), update.projectName(), userLink, taskLink);
+                            csvUpdateList.Add(update.getCSVVersion());
+                        }
+                        else
+                        {
+                            Console.WriteLine("update already send to slack previously.");
+                        }
                     }
-                    else
-                    {
-                        Console.WriteLine("update already send to slack previously.");
-                    }
-                    
                 }
             }
 
