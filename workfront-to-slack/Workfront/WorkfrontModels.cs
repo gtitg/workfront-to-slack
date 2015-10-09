@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using RestSharp.Deserializers;
 
 namespace workfront_to_slack.Workfront
 {
@@ -141,9 +142,17 @@ namespace workfront_to_slack.Workfront
             {
                 return updateNote.task.name;
             }
+            else if (updateNote != null && updateNote.issue != null)
+            {
+                return updateNote.issue.name;
+            }
             else if (updateJournalEntry != null && updateJournalEntry.task != null)
             {
                 return updateJournalEntry.task.name;
+            }
+            else if (updateJournalEntry != null && updateJournalEntry.issue != null)
+            {
+                return updateJournalEntry.issue.name;
             }
             else
             {
@@ -182,12 +191,22 @@ namespace workfront_to_slack.Workfront
         public string objCode { get; set; } 
     }
 
+    public class Issue
+    {
+        public string ID { get; set; }
+        public string name { get; set; }
+        public string objCode { get; set; } 
+    }
+
     public class Note
     {
         public string ID { get; set; }
         public string objCode { get; set; }
         public Project project { get; set; }
         public Task task { get; set; }
+
+        [DeserializeAs(Name = "opTask")]
+        public Issue issue { get; set; }
     }
 
     public class JournalEntry
@@ -196,6 +215,9 @@ namespace workfront_to_slack.Workfront
         public string objCode { get; set; }
         public Project project { get; set; }
         public Task task { get; set; }
+
+        [DeserializeAs(Name = "opTask")]
+        public Issue issue { get; set; }
     }
 
 
